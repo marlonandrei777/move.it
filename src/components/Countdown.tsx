@@ -1,9 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ChallengesContext } from '../contexts/ChallengesContext';
 import styles from '../styles/components/Countdown.module.css'
 
+let countdownTimeout: NodeJS.Timeout;
+
 export function Countdown() {
-    const [time, setTime] = useState(25 * 60);
-    const [active, setActive] = useState(false);
+    const { startNewChallenge } = useContext(ChallengesContext);
+
+    const [time, setTime] = useState(0.1 * 60);
+    const [isActive, setActive] = useState(false);
+    const [hasFinished, setHasFinished] = useState(false);
 
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
@@ -15,13 +21,23 @@ export function Countdown() {
         setActive(true);
     }
 
+    function resetCountdown() {
+        clearTimeout(countdownTimeout);
+        setActive(false);
+        setTime(0.1 * 60);
+    }
+
     useEffect(() => {
-        if(active && time > 0) {
-            setTimeout(() => {
+        if(isActive && time > 0) {
+            countdownTimeout = setTimeout(() => {
                 setTime(time - 1);
             }, 1000)
+        } else if (isActive && time == 0) {
+            setHasFinished(true);
+            setActive(false);
+            startNewChallenge();
         }
-    }, [active, time])
+    }, [isActive, time])
 
     return(
         <div>
@@ -37,13 +53,45 @@ export function Countdown() {
                 </div>
             </div>
 
-            <button 
-                type="button" 
-                className={styles.startCountdownButton}
-                onClick={startCountdown}
-            >
-                Iniciar um ciclo
-            </button>
+            { hasFinished ? (
+                <button
+                    disabled
+                    className={styles.countdownButton}
+                >
+                    Ciclo encerrado
+                    <img src="icons/check_circle.svg" alt=""/>
+                </button>
+            ) : (
+                <>
+                    { isActive ? (
+                        <button 
+                            type="button" 
+                            className={`${styles.countdownButton} ${styles.countdownButtonActive}`}
+                            onClick={resetCountdown}
+                        >
+                            Abandonar ciclo
+                            <svg width="14" 
+                                height="14" 
+                                viewBox="0 0 14 14" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                className={styles.countdownButtonActiveCloseIcon}
+                            >
+                            <path d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z"/>
+                            </svg>
+                        </button>
+                    ) : (
+                        <button 
+                            type="button"
+                            className={styles.countdownButton}
+                            onClick={startCountdown}
+                        >
+                            Iniciar um ciclo
+                            <img src="icons/play_arrow.svg" alt=""/>
+                        </button>
+                    ) }
+                </>
+            )}
         </div>
     );
 }
