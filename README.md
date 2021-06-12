@@ -20,7 +20,7 @@ Foi desenvolvido com as tecnologias:
 
 - ReactJs
 - Next.js
-- TypesCript
+- TypeScript
 
 ## 🔖 Link do projeto hospedado:
 
