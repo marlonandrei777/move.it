@@ -14,7 +14,7 @@
 
 Aplicação que tem por base a técnica de Pomodoro. Com um diferêncial de realizações de exercícíos fisícos como desafio a cada ciclo de 25 minutos conclúido. 
 
-## 🔥 Tecnologia
+## 🔥 Tecnologias
 
 Foi desenvolvido com as tecnologias:
 
